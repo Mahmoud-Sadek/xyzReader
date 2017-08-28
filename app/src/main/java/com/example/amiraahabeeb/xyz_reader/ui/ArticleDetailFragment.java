@@ -37,10 +37,10 @@ public class ArticleDetailFragment extends Fragment implements FragmentManager.O
         LoaderManager.LoaderCallbacks<Cursor> {
     public static final String ARG_ITEM_ID = "item_id";
     private static final String TAG = "ArticleDetailFragment";
-    Toolbar toolbar;
-    private Cursor cursor;
+    Toolbar mToolbar;
+    private Cursor mCursor;
     private long mItemId;
-    private View rView;
+    private View mRootView;
 
     private ImageView mPhotoView;
 
@@ -86,19 +86,19 @@ public class ArticleDetailFragment extends Fragment implements FragmentManager.O
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-        rView = inflater.inflate(R.layout.fragment_article_detail, container, false);
-        toolbar = (Toolbar) rView.findViewById(R.id.toolbar);
-        ((AppCompatActivity) getActivity()).setSupportActionBar(toolbar);
+        mRootView = inflater.inflate(R.layout.fragment_article_detail, container, false);
+        mToolbar = (Toolbar) mRootView.findViewById(R.id.toolbar);
+        ((AppCompatActivity) getActivity()).setSupportActionBar(mToolbar);
         ((AppCompatActivity) getActivity()).getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         ((AppCompatActivity) getActivity()).getSupportActionBar().setDisplayShowHomeEnabled(true);
-        toolbar.setNavigationOnClickListener(new View.OnClickListener() {
+        mToolbar.setNavigationOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 getActivity().onBackPressed();
             }
         });
-        mPhotoView = (ImageView) rView.findViewById(R.id.photo);
-        rView.findViewById(R.id.share_fab).setOnClickListener(new View.OnClickListener() {
+        mPhotoView = (ImageView) mRootView.findViewById(R.id.photo);
+        mRootView.findViewById(R.id.share_fab).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 startActivity(Intent.createChooser(ShareCompat.IntentBuilder.from(getActivity())
@@ -110,39 +110,39 @@ public class ArticleDetailFragment extends Fragment implements FragmentManager.O
 
 
         bindViews();
-        return rView;
+        return mRootView;
     }
 
     private void bindViews() {
-        if (rView == null) {
+        if (mRootView == null) {
             return;
         }
 
-        CollapsingToolbarLayout mCollapsingToolbarLayout = (CollapsingToolbarLayout) rView.findViewById(R.id.collapsing_toolbar);
-        TextView titleView = (TextView) rView.findViewById(R.id.article_title);
-        TextView bylineView = (TextView) rView.findViewById(R.id.article_byline);
+        CollapsingToolbarLayout mCollapsingToolbarLayout = (CollapsingToolbarLayout) mRootView.findViewById(R.id.collapsing_toolbar);
+        TextView titleView = (TextView) mRootView.findViewById(R.id.article_title);
+        TextView bylineView = (TextView) mRootView.findViewById(R.id.article_byline);
         bylineView.setMovementMethod(new LinkMovementMethod());
-        TextView bodyView = (TextView) rView.findViewById(R.id.article_body);
+        TextView bodyView = (TextView) mRootView.findViewById(R.id.article_body);
         bodyView.setTypeface(Typeface.createFromAsset(getResources().getAssets(), "OpenSans-Bold.ttf"));
 
-        if (cursor != null) {
-            rView.setAlpha(0);
-            rView.setVisibility(View.VISIBLE);
-            rView.animate().alpha(1);
-            titleView.setText(cursor.getString(ArticleLoader.Query.TITLE));
-            mCollapsingToolbarLayout.setTitle(cursor.getString(ArticleLoader.Query.TITLE));
+        if (mCursor != null) {
+            mRootView.setAlpha(0);
+            mRootView.setVisibility(View.VISIBLE);
+            mRootView.animate().alpha(1);
+            titleView.setText(mCursor.getString(ArticleLoader.Query.TITLE));
+            mCollapsingToolbarLayout.setTitle(mCursor.getString(ArticleLoader.Query.TITLE));
             bylineView.setText(Html.fromHtml(
                     DateUtils.getRelativeTimeSpanString(
-                            cursor.getLong(ArticleLoader.Query.PUBLISHED_DATE),
+                            mCursor.getLong(ArticleLoader.Query.PUBLISHED_DATE),
                             System.currentTimeMillis(), DateUtils.HOUR_IN_MILLIS,
                             DateUtils.FORMAT_ABBREV_ALL).toString()
                             + " by <font color='#ff5252'>"
-                            + cursor.getString(ArticleLoader.Query.AUTHOR)
+                            + mCursor.getString(ArticleLoader.Query.AUTHOR)
                             + "</font>"));
-            bodyView.setText(Html.fromHtml(cursor.getString(ArticleLoader.Query.BODY)));
-            Picasso.with(getActivity()).load(cursor.getString(ArticleLoader.Query.PHOTO_URL)).into(mPhotoView);
+            bodyView.setText(Html.fromHtml(mCursor.getString(ArticleLoader.Query.BODY)));
+            Picasso.with(getActivity()).load(mCursor.getString(ArticleLoader.Query.PHOTO_URL)).into(mPhotoView);
         } else {
-            rView.setVisibility(View.GONE);
+            mRootView.setVisibility(View.GONE);
             titleView.setText("N/A");
             bylineView.setText("N/A");
             bodyView.setText("N/A");
@@ -163,11 +163,11 @@ public class ArticleDetailFragment extends Fragment implements FragmentManager.O
             return;
         }
 
-        cursor = cursor;
-        if (cursor != null && !cursor.moveToFirst()) {
+        mCursor = cursor;
+        if (mCursor != null && !mCursor.moveToFirst()) {
             Log.e(TAG, "Error reading item detail cursor");
-            cursor.close();
-            cursor = null;
+            mCursor.close();
+            mCursor = null;
         }
 
         bindViews();
@@ -175,7 +175,7 @@ public class ArticleDetailFragment extends Fragment implements FragmentManager.O
 
     @Override
     public void onLoaderReset(Loader<Cursor> cursorLoader) {
-        cursor = null;
+        mCursor = null;
         bindViews();
     }
 

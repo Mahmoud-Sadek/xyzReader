@@ -10,7 +10,7 @@ import android.os.Build;
 import android.os.Bundle;
 import android.support.v13.app.FragmentStatePagerAdapter;
 import android.support.v4.view.ViewPager;
-import android.support.v7.app.ActionBarActivity;
+import android.support.v7.app.AppCompatActivity;
 import android.util.TypedValue;
 import android.view.View;
 import android.view.ViewGroup;
@@ -20,10 +20,10 @@ import com.example.amiraahabeeb.xyz_reader.data.ArticleLoader;
 import com.example.amiraahabeeb.xyz_reader.data.ItemsContract;
 
 
-public class ArticleDetailActivity extends ActionBarActivity
+public class ArticleDetailActivity extends AppCompatActivity
         implements LoaderManager.LoaderCallbacks<Cursor> {
 
-    private Cursor cursor;
+    private Cursor mCursor;
     private long startId;
     private long selectedItemId;
     private ViewPager pagerView;
@@ -55,10 +55,10 @@ public class ArticleDetailActivity extends ActionBarActivity
 
             @Override
             public void onPageSelected(int position) {
-                if (cursor != null) {
-                    cursor.moveToPosition(position);
+                if (mCursor != null) {
+                    mCursor.moveToPosition(position);
                 }
-                selectedItemId = cursor.getLong(ArticleLoader.Query._ID);
+                selectedItemId = mCursor.getLong(ArticleLoader.Query._ID);
                 updateUpButtonPosition();
             }
         });
@@ -79,7 +79,7 @@ public class ArticleDetailActivity extends ActionBarActivity
 
     @Override
     public void onLoadFinished(Loader<Cursor> cursorLoader, Cursor cursor) {
-        cursor = cursor;
+        mCursor = cursor;
         pagerAdapter.notifyDataSetChanged();
 
         // Select the start ID
@@ -100,7 +100,7 @@ public class ArticleDetailActivity extends ActionBarActivity
 
     @Override
     public void onLoaderReset(Loader<Cursor> cursorLoader) {
-        cursor = null;
+        mCursor = null;
         pagerAdapter.notifyDataSetChanged();
     }
 
@@ -130,13 +130,13 @@ public class ArticleDetailActivity extends ActionBarActivity
 
         @Override
         public Fragment getItem(int position) {
-            cursor.moveToPosition(position);
-            return ArticleDetailFragment.newInstance(cursor.getLong(ArticleLoader.Query._ID));
+            mCursor.moveToPosition(position);
+            return ArticleDetailFragment.newInstance(mCursor.getLong(ArticleLoader.Query._ID));
         }
 
         @Override
         public int getCount() {
-            return (cursor != null) ? cursor.getCount() : 0;
+            return (mCursor != null) ? mCursor.getCount() : 0;
         }
     }
 }
